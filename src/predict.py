@@ -22,18 +22,23 @@ def main():
         assert len(argv) == 3, "Please provide theta0 and theta1"
         theta0 = testParamsAreFloat(argv[1])
         theta1 = testParamsAreFloat(argv[2])
-        assert (theta1 is not None and theta0 is not None), "theta0 and theta1 must be numbers"
+        assert (theta1 is not None and theta0 is not None), "thetas not num"
         mileage = None
         while (mileage is None or mileage < 0):
-            mileage = testParamsAreFloat(input("Please enter a car mileage in km : "))
+            mileage = testParamsAreFloat(
+                input("Please enter a car mileage in km : "))
             if (mileage is None or mileage < 0):
-                print("     \033[31mPlease enter a correct positif number...\n\033[0m")
+                print("     \033[31mEnter a correct positif number\n\033[0m")
         price = theta0 + theta1 * mileage
-        print("     \033[32mThe expected price is :", "{:.2f}".format(max(0, price)), "euros\033[0m")
+        print("     \033[32mThe expected price is :",
+              "{:.2f}".format(max(0, price)), "euros\033[0m")
+        return 0
     except AssertionError as msg:
         print("Error:", msg)
+        return 1
     except Exception as err:
         print("Error: ", err)
+        return 1
 
 
 if __name__ == "__main__":

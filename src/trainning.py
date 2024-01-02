@@ -2,19 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from sys import argv
-
-
-def load(path: str) -> pd.DataFrame | None:
-    """
-    Function that load data from a csv file and return the panda dataFrame
-    Return None if there was a problem
-    """
-    try:
-        df = pd.read_csv(path)
-        return (df)
-    except Exception as e:
-        print(e)
-        return None
+from load_csv import load
 
 
 def calculateCostSquareError(theta0, theta1, mileage, price):
@@ -25,7 +13,10 @@ def calculateCostSquareError(theta0, theta1, mileage, price):
     return (1/(2*len(mileage)) * sum((theta1*mileage + theta0 - price)**2))
 
 
-def plotResults(mileage, price, theta0, theta1, result, alpha):
+def plotResults(mileage, price, theta0, theta1, result):
+    """
+    Show data and model in a graph
+    """
     plt.figure(figsize=(15, 6))
     plt.subplot(1, 2, 1)
     x = np.linspace(min(mileage), max(mileage), 2)
@@ -73,16 +64,29 @@ def executeGradientDescentAlgo(mileageN, price, alpha):
     theta0_N = 0
     theta1_N = 0
     result = pd.DataFrame(columns=['theta0_N', 'theta1_N', "Cost"])
-    result.loc[len(result)] = [theta0_N, theta1_N, calculateCostSquareError(theta0_N, theta1_N, mileageN, price)]
+    result.loc[len(result)] = [theta0_N, theta1_N,
+                               calculateCostSquareError(theta0_N,
+                                                        theta1_N,
+                                                        mileageN,
+                                                        price)]
     for i in range(100):
-        theta0_N, theta1_N = updateParams(mileageN, price, theta0_N, theta1_N, alpha)
-        result.loc[len(result)] = [theta0_N, theta1_N, calculateCostSquareError(theta0_N, theta1_N, mileageN, price)]
+        theta0_N, theta1_N = updateParams(mileageN,
+                                          price,
+                                          theta0_N,
+                                          theta1_N,
+                                          alpha)
+        result.loc[len(result)] = [theta0_N, theta1_N,
+                                   calculateCostSquareError(theta0_N,
+                                                            theta1_N,
+                                                            mileageN,
+                                                            price)]
     return (theta0_N, theta1_N, result)
 
 
 def main():
     """
-    Program that uses Machine Learning to find the corect parameters for a linear regression.
+    Program that uses Machine Learning to find the corect
+    parameters for a linear regression.
     """
     try:
         assert len(argv) == 2, "You need to pass your data file as argument"
@@ -92,17 +96,22 @@ def main():
         mileage = df.loc[:, 'km']
         mileageN, mileageMean, mileageStd = normilisedDataSet(mileage)
         alpha = 0.1
-        theta0_N, theta1_N, result = executeGradientDescentAlgo(mileageN, price, alpha)
+        theta0_N, theta1_N, result = executeGradientDescentAlgo(mileageN,
+                                                                price,
+                                                                alpha)
         theta0 = theta0_N - (theta1_N * mileageMean / mileageStd)
         theta1 = theta1_N / mileageStd
         print("Training model result (price = theta0 + theta1 * mileage) :")
         print("theta0 :", theta0)
         print("theta1 :", theta1)
         plotResults(mileage, price, theta0, theta1, result, alpha)
+        return 0
     except AssertionError as msg:
         print("Error:", msg)
+        return 1
     except Exception as err:
         print("Error: ", err)
+        return 1
 
 
 if __name__ == "__main__":
