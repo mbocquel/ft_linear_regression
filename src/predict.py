@@ -1,4 +1,6 @@
 from sys import argv
+import pandas as pd
+import os.path
 
 
 def testParamsAreFloat(str):
@@ -19,16 +21,23 @@ def main():
     These parameters must be first estimate using the trainning program.
     """
     try:
-        assert len(argv) == 3, "Please provide theta0 and theta1"
-        theta0 = testParamsAreFloat(argv[1])
-        theta1 = testParamsAreFloat(argv[2])
+        assert len(argv) == 1, "Wrong number of arguments"
+        check_file = os.path.isfile("params.csv")
+        if (not check_file):
+            theta = pd.DataFrame({'theta0': [0],
+                               'theta1': [0]})
+            theta.to_csv("params.csv", index=False)
+        else:
+            theta = pd.read_csv("params.csv")
+        theta0 = testParamsAreFloat(theta.loc[0,'theta0'])
+        theta1 = testParamsAreFloat(theta.loc[0,'theta1'])
         assert (theta1 is not None and theta0 is not None), "thetas not num"
         mileage = None
         while (mileage is None or mileage < 0):
             mileage = testParamsAreFloat(
                 input("Please enter a car mileage in km : "))
             if (mileage is None or mileage < 0):
-                print("     \033[31mEnter a correct positif number\n\033[0m")
+                print("\033[31mEnter a correct positif or nul number\n\033[0m")
         price = theta0 + theta1 * mileage
         print("     \033[32mThe expected price is :",
               "{:.2f}".format(max(0, price)), "euros\033[0m")

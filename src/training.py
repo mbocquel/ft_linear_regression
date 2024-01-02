@@ -2,7 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from sys import argv
-from load_csv import load
 
 
 def calculateCostSquareError(theta0, theta1, mileage, price):
@@ -90,7 +89,7 @@ def main():
     """
     try:
         assert len(argv) == 2, "You need to pass your data file as argument"
-        df = load(argv[1])
+        df = pd.read_csv(argv[1])
         assert df is not None, "There is a problem with the dataset..."
         price = df.loc[:, 'price']
         mileage = df.loc[:, 'km']
@@ -102,9 +101,12 @@ def main():
         theta0 = theta0_N - (theta1_N * mileageMean / mileageStd)
         theta1 = theta1_N / mileageStd
         print("Training model result (price = theta0 + theta1 * mileage) :")
-        print("theta0 :", theta0)
-        print("theta1 :", theta1)
-        plotResults(mileage, price, theta0, theta1, result, alpha)
+        print("     theta0 :", theta0)
+        print("     theta1 :", theta1)
+        params = pd.DataFrame({'theta0': [theta0],
+                               'theta1': [theta1]})
+        params.to_csv("params.csv", index=False)
+        plotResults(mileage, price, theta0, theta1, result)
         return 0
     except AssertionError as msg:
         print("Error:", msg)
