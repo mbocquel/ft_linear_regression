@@ -66,6 +66,7 @@ def main():
         return 1
     except Exception as err:
         print("Error: ", err)
+        return 1
 
 
 if __name__ == "__main__":
