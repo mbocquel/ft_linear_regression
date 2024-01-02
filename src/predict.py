@@ -25,12 +25,12 @@ def main():
         check_file = os.path.isfile("params.csv")
         if (not check_file):
             theta = pd.DataFrame({'theta0': [0],
-                               'theta1': [0]})
+                                  'theta1': [0]})
             theta.to_csv("params.csv", index=False)
         else:
             theta = pd.read_csv("params.csv")
-        theta0 = testParamsAreFloat(theta.loc[0,'theta0'])
-        theta1 = testParamsAreFloat(theta.loc[0,'theta1'])
+        theta0 = testParamsAreFloat(theta.loc[0, 'theta0'])
+        theta1 = testParamsAreFloat(theta.loc[0, 'theta1'])
         assert (theta1 is not None and theta0 is not None), "thetas not num"
         mileage = None
         while (mileage is None or mileage < 0):
